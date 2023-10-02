@@ -37,8 +37,11 @@
 	<h5>{monitor.locationStop.properties.title}</h5>
 	{#each monitor.lines as line}
 		<Train train="{line}"/>
-
+	{:else}
+		<p>No departures at this time.</p>
 	{/each}
+{:else}
+	<p>Couldn't find departures. Please try reloading</p>
 {/each}
 
 <style>
