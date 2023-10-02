@@ -3,12 +3,13 @@
 	import {getDepartures} from "../scripts/wienerlinien";
 
 	export let rblNumber;
+	export let showRelatedLines = true;
 
 	let departures = {monitors: []};
 	let monitors = [];
 
 	async function loadDepartures() {
-		departures.monitors = (await getDepartures(rblNumber))?.monitors;
+		departures.monitors = (await getDepartures(rblNumber, showRelatedLines))?.monitors;
 		console.log(departures);
 	}
 

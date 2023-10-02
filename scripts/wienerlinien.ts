@@ -33,10 +33,10 @@ export async function getTrafficInfo() {
 	}
 }
 
-export async function getDepartures(rblNumber: string) {
+export async function getDepartures(rblNumber: string, showRelatedLines = true) {
 	// async/await
 	try {
-		const data = await wili.monitor(rblNumber, {aArea: 1});
+		const data = await wili.monitor(rblNumber, {aArea: showRelatedLines ? 1 : 0});
 		console.log(data);
 		return data;
 	} catch (error) {

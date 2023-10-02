@@ -5,10 +5,12 @@ import {VIEW_TYPE_WIENER_LINIEN, WienerLinienView} from './view';
 
 interface MyPluginSettings {
 	rblNumber: string;
+	showRelatedLines: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	rblNumber: '4437'
+	rblNumber: '4437',
+	showRelatedLines: true,
 }
 
 export default class WienerLinienPlugin extends Plugin {
@@ -108,5 +110,16 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.rblNumber = value;
 					await this.plugin.saveSettings();
 				}));
+
+		new Setting(containerEl)
+			.setName('Show related lines')
+			.setDesc('Show departures for related lines')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showRelatedLines)
+				.onChange(async (value) => {
+					this.plugin.settings.showRelatedLines = value;
+					await this.plugin.saveSettings();
+				}
+			));
 	}
 }
