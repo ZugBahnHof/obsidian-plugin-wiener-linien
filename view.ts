@@ -25,6 +25,9 @@ export class WienerLinienView extends ItemView {
 	async onOpen() {
 		this.component = new Main({
 			target: this.contentEl,
+			props: {
+				rblNumber: this.app.plugins.plugins["wiener-linien"].settings.rblNumber,
+			}
 		});
 	}
 

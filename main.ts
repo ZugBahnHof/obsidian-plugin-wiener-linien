@@ -4,11 +4,11 @@ import {VIEW_TYPE_WIENER_LINIEN, WienerLinienView} from './view';
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
-	mySetting: string;
+	rblNumber: string;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	rblNumber: '4437'
 }
 
 export default class WienerLinienPlugin extends Plugin {
@@ -99,13 +99,13 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Station number')
+			.setDesc('Should be a valid RBL number')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setPlaceholder('4437')
+				.setValue(this.plugin.settings.rblNumber)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.rblNumber = value;
 					await this.plugin.saveSettings();
 				}));
 	}
