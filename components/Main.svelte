@@ -4,13 +4,6 @@
 
 	export let rblNumber;
 
-	let trains = [
-		{name: "U4", type: "ptMetro", towards: "Hütteldorf", departures: {departure: []}},
-		{name: "71", type: "ptTram", towards: "Zentralfriedhof", departures: {departure: []}},
-		{name: "57A", type: "ptBusCity", towards: "Burgring", departures: {departure: []}},
-		{name: "N8", type: "ptBusNight", towards: "Kp, irgendwas", departures: {departure: []}},
-	]
-
 	let departures = {monitors: []};
 
 	async function loadDepartures() {
@@ -30,8 +23,4 @@
 		<Train train="{line}" />
 
 	{/each}
-{/each}
-
-{#each trains as train}
-	<Train {train} />
 {/each}
