@@ -27,9 +27,10 @@
 	}, []));
 </script>
 
-<h4>My Departures</h4>
-
-<button on:click={loadDepartures}>Reload</button>
+<div class="header">
+	<h4>My Departures</h4>
+	<button on:click={loadDepartures}>Reload</button>
+</div>
 
 
 {#each monitors as monitor}
@@ -39,3 +40,11 @@
 
 	{/each}
 {/each}
+
+<style>
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+</style>
