@@ -35,7 +35,7 @@
 	<div class="direction">{train.towards}</div>
 	<div class="departures">
 		{#each train.departures.departure.slice(0, 2) as departure}
-			<Departure departureTime={departure.departureTime}/>
+			<Departure departureTime={departure.departureTime} barrierFree="{train.barrierFree}" vehicleInfo="{departure.vehicle}"/>
 		{/each}
 	</div>
 </div>
