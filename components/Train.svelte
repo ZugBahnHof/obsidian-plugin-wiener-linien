@@ -46,6 +46,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.5em 0;
+		gap: 1em;
 	}
 
 	.number {
@@ -54,6 +55,11 @@
 		width: 3em;
 		line-height: 3em;
 		text-align: center;
+		flex-shrink: 0;
+	}
+
+	.direction {
+		flex-grow: 1;
 	}
 
 	.departures {
