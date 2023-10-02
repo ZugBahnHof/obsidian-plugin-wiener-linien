@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "wiener-linien",
+	"name": "Wiener Linien Obsidian Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Obsidian Plugin to show Wiener Linien departures",
+	"author": "ZugBahnHof",
+	"authorUrl": "https://github.com/ZugBahnHof",
+	"fundingUrl": "https://github.com/sponsors/ZugBahnHof",
 	"isDesktopOnly": false
 }
