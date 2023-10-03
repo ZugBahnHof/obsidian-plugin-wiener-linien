@@ -98,6 +98,14 @@ export default class WienerLinienPlugin extends Plugin {
 		);
 	}
 
+	async reloadView() {
+		const view = this.app.workspace.getActiveViewOfType(WienerLinienView);
+		if (view !== null) {
+			// There is an active view, so simply create a new one
+			return this.openView()
+		}
+	}
+
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
