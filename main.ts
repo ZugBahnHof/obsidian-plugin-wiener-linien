@@ -1,16 +1,37 @@
 import {App, Modal, Plugin, PluginSettingTab, Setting} from 'obsidian';
 import {VIEW_TYPE_WIENER_LINIEN, WienerLinienView} from './view';
 
+import stationsPerLine from "./data/stations-per-line.json";
+
+type LineID = keyof typeof stationsPerLine;
+
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
 	rblNumber: string;
+	train: LineID;
 	showRelatedLines: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	rblNumber: '4437',
+	train: '301',
 	showRelatedLines: true,
+}
+
+const options = () => Object.fromEntries(
+	Object.entries(stationsPerLine).map(([key, value]) => [key, value?.name])
+);
+
+let stations: Record<string, string>;
+
+function refreshStations(line: LineID) {
+	stations = Object.fromEntries(
+		stationsPerLine[line]
+			.stations
+			.filter(station => station.id && station.name)
+			.map(station => [station.id, station.name])
+	) as Record<string, string>
 }
 
 export default class WienerLinienPlugin extends Plugin {
@@ -100,6 +121,8 @@ class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		refreshStations(this.plugin.settings!.train)
+
 		new Setting(containerEl)
 			.setName('Station number')
 			.setDesc('Should be a valid RBL number')
@@ -109,7 +132,31 @@ class SampleSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.rblNumber = value;
 					await this.plugin.saveSettings();
-				}));
+				})
+			);
+
+		new Setting(containerEl)
+			.setName("Line")
+			.setDesc("Select your train/tram/bus")
+			.addDropdown(dropdown => dropdown
+				.addOptions(options())
+				.setValue(this.plugin.settings!.train)
+				.onChange(async (value: string) => {
+						this.plugin.settings!.train = value as LineID;
+						await this.plugin.saveSettings();
+						refreshStations(value as LineID)
+					}
+				)
+			)
+			.addDropdown(dropdown => dropdown
+				.addOptions(stations)
+				.setValue(this.plugin.settings!.rblNumber)
+				.onChange(async (value) => {
+					this.plugin.settings!.rblNumber = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
 
 		new Setting(containerEl)
 			.setName('Show related lines')
