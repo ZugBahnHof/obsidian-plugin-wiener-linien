@@ -35,7 +35,7 @@ function refreshStations(line: LineID) {
 }
 
 export default class WienerLinienPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings?: MyPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -104,6 +104,7 @@ export default class WienerLinienPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		await this.reloadView();
 	}
 }
 
@@ -128,9 +129,9 @@ class SampleSettingTab extends PluginSettingTab {
 			.setDesc('Should be a valid RBL number')
 			.addText(text => text
 				.setPlaceholder('4437')
-				.setValue(this.plugin.settings.rblNumber)
+				.setValue(this.plugin.settings!.rblNumber)
 				.onChange(async (value) => {
-					this.plugin.settings.rblNumber = value;
+					this.plugin.settings!.rblNumber = value;
 					await this.plugin.saveSettings();
 				})
 			);
@@ -162,11 +163,11 @@ class SampleSettingTab extends PluginSettingTab {
 			.setName('Show related lines')
 			.setDesc('Show departures for related lines')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.showRelatedLines)
+				.setValue(this.plugin.settings!.showRelatedLines)
 				.onChange(async (value) => {
-					this.plugin.settings.showRelatedLines = value;
-					await this.plugin.saveSettings();
-				}
-			));
+						this.plugin.settings!.showRelatedLines = value;
+						await this.plugin.saveSettings();
+					}
+				));
 	}
 }
