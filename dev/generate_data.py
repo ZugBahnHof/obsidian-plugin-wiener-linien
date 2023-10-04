@@ -36,9 +36,9 @@ def main():
 
 		for row in reader:
 			station = {
-				"id": row["StopID"],
-				"name": stops.get(row["StopID"], {}).get("StopText"),
-				"direction": row["Direction"],
+				"id": row["StopID"] or "-1",
+				"name": stops.get(row["StopID"], {}).get("StopText") or "Unknown Station",
+				"direction": row["Direction"] or "unknown",
 			}
 
 			if stations_per_line.get(row["LineID"]) is None:
@@ -55,7 +55,7 @@ def main():
 
 	for line_key in stations_per_line.keys():
 		for station in stations_per_line[line_key]["stations"]:
-			station["direction"] = line_directions[line_key][station["direction"]]
+			station["direction"] = line_directions[line_key].get(station["direction"], "unknown")
 
 	with open("../data/stations-per-line.json", "w") as f:
 		f.write(json.dumps(stations_per_line))
