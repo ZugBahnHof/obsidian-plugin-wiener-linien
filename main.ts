@@ -30,6 +30,9 @@ function refreshStations(line: LineID) {
 		stationsPerLine[line]
 			.stations
 			.filter(station => station.id && station.name)
+			.sort((a, b) =>
+				a.direction.localeCompare(b.direction) * 10 + a.name.localeCompare(b.name)
+			)
 			.map(station => [station.id, `${station.name}    (Direction ${station.direction})`])
 	) as Record<string, string>
 }
