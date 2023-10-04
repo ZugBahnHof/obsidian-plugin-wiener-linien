@@ -30,7 +30,7 @@ function refreshStations(line: LineID) {
 		stationsPerLine[line]
 			.stations
 			.filter(station => station.id && station.name)
-			.map(station => [station.id, station.name])
+			.map(station => [station.id, `${station.name}    (Direction ${station.direction})`])
 	) as Record<string, string>
 }
 
