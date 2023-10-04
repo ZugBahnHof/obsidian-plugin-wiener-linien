@@ -36,6 +36,7 @@ export async function getTrafficInfo() {
 export async function getDepartures(rblNumber: string, showRelatedLines = true) {
 	// async/await
 	try {
+		// @ts-ignore
 		const data = await wili.monitor(rblNumber, {aArea: showRelatedLines ? 1 : 0});
 		console.log(data);
 		return data;

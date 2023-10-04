@@ -4,17 +4,20 @@
 	import {onDestroy, onMount} from "svelte";
 	import {moment} from "obsidian";
 
-
-	export let rblNumber;
+	export let rblNumber: string;
 	export let showRelatedLines = true;
 
-	let departures = {monitors: []};
-	let monitors = [];
-	let lastRefresh: moment;
+	let tmp: unknown[] = [];
+
+	let departures = {
+		monitors: [] as unknown[],
+	};
+	let monitors: unknown[] = [];
+	let lastRefresh: moment.Moment;
 	let lastRefreshReadable: string;
 
 	async function loadDepartures() {
-		departures.monitors = (await getDepartures(rblNumber, showRelatedLines))?.monitors;
+		departures.monitors = (await getDepartures(rblNumber, showRelatedLines))?.monitors as typeof monitors;
 		lastRefresh = moment();
 
 		console.log(departures);
@@ -22,7 +25,7 @@
 
 	onMount(loadDepartures)
 
-	$: (monitors = departures.monitors.reduce((acc, obj) => {
+	$: (monitors = departures.monitors.reduce((acc: Array<any>, obj: any) => {
 		const title = obj.locationStop.properties.title;
 		const existingItem = acc.find(item => item.locationStop.properties.title === title);
 
@@ -35,14 +38,14 @@
 		return acc;
 	}, []));
 
-	function updateTime (newTime?: moment){
+	function updateTime(_?: moment.Moment) {
 		lastRefreshReadable = lastRefresh?.fromNow()
 		console.debug("Updating time")
 	}
 
 	$: updateTime(lastRefresh)
 
-  	let interval = setInterval(() => updateTime(), 30000);
+	let interval = setInterval(() => updateTime(), 30000);
 
 	onDestroy(() => {
 		clearInterval(interval);
@@ -56,7 +59,7 @@
 </div>
 
 {#if lastRefresh}
-	<div title="{lastRefresh}">Last refresh: {lastRefreshReadable}</div>
+	<div title="{lastRefresh.format('MMMM Do YYYY, h:mm:ss a')}">Last refresh: {lastRefreshReadable}</div>
 {/if}
 
 
