@@ -64,7 +64,7 @@ export default class WienerLinienPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon('train', 'Wiener Linien', (evt: MouseEvent) => {
+		this.addRibbonIcon('train', 'Wiener Linien', () => {
 			// Called when the user clicks the icon.
 			this.openView();
 		});
