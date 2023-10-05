@@ -188,7 +188,7 @@ class SampleSettingTab extends PluginSettingTab {
 		for (let i = 0; i < this.plugin.settings!.numTrains; i++) {
 
 			new Setting(containerEl)
-				.setName("Line")
+				.setName(`Line number ${i + 1}`)
 				.setDesc("Select your train/tram/bus. Settings might need to be reloaded to take effect.")
 				.addDropdown(dropdown => dropdown
 					.addOptions(options())
