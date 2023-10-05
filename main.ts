@@ -9,13 +9,13 @@ type LineID = keyof typeof stationsPerLine;
 
 const SETTINGS_INDEX = 0;
 
-interface MyPluginSettings {
+interface WienerLinienSettings {
 	rblNumbers: string[];
 	trains: LineID[];
 	showRelatedLines: boolean;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: WienerLinienSettings = {
 	rblNumbers: ['4437'],
 	trains: ['301'],
 	showRelatedLines: true,
@@ -57,7 +57,7 @@ function refreshStations(trains: LineID[]) {
 }
 
 export default class WienerLinienPlugin extends Plugin {
-	settings?: MyPluginSettings;
+	settings?: WienerLinienSettings;
 
 	async onload() {
 		await this.loadSettings();
