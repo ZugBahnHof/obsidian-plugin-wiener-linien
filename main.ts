@@ -10,12 +10,14 @@ type LineID = keyof typeof stationsPerLine;
 const SETTINGS_INDEX = 0;
 
 interface WienerLinienSettings {
+	numTrains: number;
 	rblNumbers: string[];
 	trains: LineID[];
 	showRelatedLines: boolean;
 }
 
 const DEFAULT_SETTINGS: WienerLinienSettings = {
+	numTrains: 1,
 	rblNumbers: ['4437'],
 	trains: ['301'],
 	showRelatedLines: true,
@@ -132,9 +134,11 @@ export default class WienerLinienPlugin extends Plugin {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
-	async saveSettings() {
+	async saveSettings(reload?: boolean|undefined) {
 		await this.saveData(this.settings);
-		await this.reloadView();
+		if (reload === true) {
+			await this.reloadView();
+		}
 	}
 }
 
@@ -162,31 +166,50 @@ class SampleSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings!.rblNumbers[SETTINGS_INDEX])
 				.onChange(async (value) => {
 					this.plugin.settings!.rblNumbers[SETTINGS_INDEX] = value;
-					await this.plugin.saveSettings();
+					await this.plugin.saveSettings(true);
+					this.display();
 				})
 			);
 
 		new Setting(containerEl)
-			.setName("Line")
-			.setDesc("Select your train/tram/bus")
-			.addDropdown(dropdown => dropdown
-				.addOptions(options())
-				.setValue(this.plugin.settings!.trains[SETTINGS_INDEX])
-				.onChange(async (value: string) => {
-						this.plugin.settings!.trains[0] = value as LineID;
-						await this.plugin.saveSettings();
-						refreshStations(this.plugin.settings!.trains)
-					}
-				)
-			)
-			.addDropdown(dropdown => dropdown
-				.addOptions(stationOptions[SETTINGS_INDEX])
-				.setValue(this.plugin.settings!.rblNumbers[SETTINGS_INDEX])
+			.setName('Number of stations')
+			.setDesc('How many stations should be displayed (1 though 5)? Settings might need to be reloaded to take effect.')
+			.addText(text => text
+				.setPlaceholder('1')
+				.setValue(this.plugin.settings!.numTrains.toString())
 				.onChange(async (value) => {
-					this.plugin.settings!.rblNumbers[SETTINGS_INDEX] = value;
+					this.plugin.settings!.numTrains = Math.max(1, Math.min(parseInt(value), 5));
 					await this.plugin.saveSettings();
+					this.display();
 				})
 			);
+
+
+		for (let i = 0; i < this.plugin.settings!.numTrains; i++) {
+
+			new Setting(containerEl)
+				.setName("Line")
+				.setDesc("Select your train/tram/bus. Settings might need to be reloaded to take effect.")
+				.addDropdown(dropdown => dropdown
+					.addOptions(options())
+					.setValue(this.plugin.settings!.trains[i])
+					.onChange(async (value: string) => {
+							this.plugin.settings!.trains[i] = value as LineID;
+							await this.plugin.saveSettings();
+							refreshStations(this.plugin.settings!.trains);
+							this.display();
+						}
+					)
+				)
+				.addDropdown(dropdown => dropdown
+					.addOptions(stationOptions[i])
+					.setValue(this.plugin.settings!.rblNumbers[i])
+					.onChange(async (value) => {
+						this.plugin.settings!.rblNumbers[i] = value;
+						await this.plugin.saveSettings(true);
+					})
+				);
+		}
 
 
 		new Setting(containerEl)
@@ -196,7 +219,7 @@ class SampleSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings!.showRelatedLines)
 				.onChange(async (value) => {
 						this.plugin.settings!.showRelatedLines = value;
-						await this.plugin.saveSettings();
+						await this.plugin.saveSettings(true);
 					}
 				));
 	}

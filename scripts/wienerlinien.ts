@@ -1,4 +1,4 @@
-import {createWienerLinien} from 'wili';
+import {createWienerLinien, type StringNumbers} from 'wili';
 import {requestUrl} from "obsidian";
 
 
@@ -33,11 +33,11 @@ export async function getTrafficInfo() {
 	}
 }
 
-export async function getDepartures(rblNumber: string, showRelatedLines = true) {
+export async function getDepartures(rblNumbers: StringNumbers, showRelatedLines = true) {
 	// async/await
 	try {
 		// @ts-ignore
-		const data = await wili.monitor(rblNumber, {aArea: showRelatedLines ? 1 : 0});
+		const data = await wili.monitor(rblNumbers, {aArea: showRelatedLines ? 1 : 0});
 		console.log(data);
 		return data;
 	} catch (error) {

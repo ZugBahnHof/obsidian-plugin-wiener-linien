@@ -4,7 +4,7 @@
 	import {onDestroy, onMount} from "svelte";
 	import {moment} from "obsidian";
 
-	export let rblNumber: string;
+	export let rblNumbers: string[];
 	export let showRelatedLines = true;
 
 	let tmp: unknown[] = [];
@@ -17,7 +17,7 @@
 	let lastRefreshReadable: string;
 
 	async function loadDepartures() {
-		departures.monitors = (await getDepartures(rblNumber, showRelatedLines))?.monitors as typeof monitors;
+		departures.monitors = (await getDepartures(rblNumbers, showRelatedLines))?.monitors as typeof monitors;
 		lastRefresh = moment();
 
 		console.log(departures);
