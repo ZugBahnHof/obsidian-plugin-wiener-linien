@@ -7,15 +7,17 @@ type LineID = keyof typeof stationsPerLine;
 
 // Remember to rename these classes and interfaces!
 
+const SETTINGS_INDEX = 0;
+
 interface MyPluginSettings {
-	rblNumber: string;
-	train: LineID;
+	rblNumbers: string[];
+	trains: LineID[];
 	showRelatedLines: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	rblNumber: '4437',
-	train: '301',
+	rblNumbers: ['4437'],
+	trains: ['301'],
 	showRelatedLines: true,
 }
 
@@ -23,21 +25,35 @@ const options = () => Object.fromEntries(
 	Object.entries(stationsPerLine).map(([key, value]) => [key, value?.name])
 );
 
-let stations: Record<string, string>;
+let stations: Record<LineID, Record<string, string>>;
+let stationOptions: Record<number, Record<string, string>>;
 
-function refreshStations(line: LineID) {
-	stations = Object.fromEntries(
-		stationsPerLine[line]
-			.stations
-			.filter(station => station.id && station.name)
-			.sort((a, b) =>
-				((maybeZero, fallback) => maybeZero === 0 ? fallback : maybeZero)(
-					a.direction.localeCompare(b.direction) * 10,
-					a.name.localeCompare(b.name),
+stations = Object.fromEntries(
+	(Object.keys(stationsPerLine) as LineID[]).map(
+		line => (
+			[
+				line,
+				Object.fromEntries(
+					stationsPerLine[line]
+						.stations
+						.filter(station => station.id && station.name)
+						.sort((a, b) =>
+							((maybeZero, fallback) => maybeZero === 0 ? fallback : maybeZero)(
+								a.direction.localeCompare(b.direction) * 10,
+								a.name.localeCompare(b.name),
+							)
+						)
+						.map(station => [station.id, `${station.name}    (Direction ${station.direction})`])
 				)
-			)
-			.map(station => [station.id, `${station.name}    (Direction ${station.direction})`])
-	) as Record<string, string>
+			]
+		)
+	)
+) as Record<LineID, Record<string, string>>;
+
+function refreshStations(trains: LineID[]) {
+	stationOptions = Object.fromEntries(
+		trains.map((train, index) => [index, stations[train]])
+	);
 }
 
 export default class WienerLinienPlugin extends Plugin {
@@ -136,16 +152,16 @@ class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		refreshStations(this.plugin.settings!.train)
+		refreshStations(this.plugin.settings!.trains)
 
 		new Setting(containerEl)
 			.setName('Station number')
 			.setDesc('Should be a valid RBL number')
 			.addText(text => text
 				.setPlaceholder('4437')
-				.setValue(this.plugin.settings!.rblNumber)
+				.setValue(this.plugin.settings!.rblNumbers[SETTINGS_INDEX])
 				.onChange(async (value) => {
-					this.plugin.settings!.rblNumber = value;
+					this.plugin.settings!.rblNumbers[SETTINGS_INDEX] = value;
 					await this.plugin.saveSettings();
 				})
 			);
@@ -155,19 +171,19 @@ class SampleSettingTab extends PluginSettingTab {
 			.setDesc("Select your train/tram/bus")
 			.addDropdown(dropdown => dropdown
 				.addOptions(options())
-				.setValue(this.plugin.settings!.train)
+				.setValue(this.plugin.settings!.trains[SETTINGS_INDEX])
 				.onChange(async (value: string) => {
-						this.plugin.settings!.train = value as LineID;
+						this.plugin.settings!.trains[0] = value as LineID;
 						await this.plugin.saveSettings();
-						refreshStations(value as LineID)
+						refreshStations(this.plugin.settings!.trains)
 					}
 				)
 			)
 			.addDropdown(dropdown => dropdown
-				.addOptions(stations)
-				.setValue(this.plugin.settings!.rblNumber)
+				.addOptions(stationOptions[SETTINGS_INDEX])
+				.setValue(this.plugin.settings!.rblNumbers[SETTINGS_INDEX])
 				.onChange(async (value) => {
-					this.plugin.settings!.rblNumber = value;
+					this.plugin.settings!.rblNumbers[SETTINGS_INDEX] = value;
 					await this.plugin.saveSettings();
 				})
 			);
