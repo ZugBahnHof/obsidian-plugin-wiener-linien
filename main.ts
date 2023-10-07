@@ -9,7 +9,7 @@ type LineID = keyof typeof stationsPerLine;
 
 const SETTINGS_INDEX = 0;
 
-interface WienerLinienSettings {
+export interface WienerLinienSettings {
 	numTrains: number;
 	rblNumbers: string[];
 	trains: LineID[];
@@ -71,7 +71,7 @@ export default class WienerLinienPlugin extends Plugin {
 
 		this.registerView(
 			VIEW_TYPE_WIENER_LINIEN,
-			leaf => new WienerLinienView(leaf)
+			leaf => new WienerLinienView(leaf, this.settings)
 		);
 
 		this.addCommand({
